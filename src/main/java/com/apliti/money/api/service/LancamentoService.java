@@ -1,5 +1,7 @@
 package com.apliti.money.api.service;
 
+import java.util.Optional;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -29,7 +31,7 @@ public class LancamentoService {
 	}
 
 	private Lancamento buscarLancamentoPeloCodigo(Long codigo) {
-		Lancamento lancamentoSalva = lancamentoRepository.findOne(codigo);
+		Lancamento lancamentoSalva = lancamentoRepository.getOne(codigo);
 		if (lancamentoSalva == null) {
 			throw new EmptyResultDataAccessException(1);
 		}
@@ -37,8 +39,8 @@ public class LancamentoService {
 	}
 
 	public Lancamento salvar(Lancamento lancamento) {
-		Pessoa pessoa = pessoaRepository.findOne(lancamento.getPessoa().getCodigo());
-		if (pessoa == null || pessoa.isInativo()) {
+		Optional<Pessoa> pessoa = pessoaRepository.findById(lancamento.getPessoa().getCodigo());
+		if (! pessoa.isPresent()) {
 			throw new PessoaInexistenteOuInativaException();
 		}
 		return lancamentoRepository.save(lancamento);

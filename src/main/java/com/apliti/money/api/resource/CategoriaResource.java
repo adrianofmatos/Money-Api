@@ -1,6 +1,7 @@
 package com.apliti.money.api.resource;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -48,7 +49,7 @@ public class CategoriaResource {
 	@GetMapping("/{codigo}")
 	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_CATEGORIA') and #oauth2.hasScope('read')")
 	public ResponseEntity<?> buscarPeloCodigo(@PathVariable Long codigo) {
-		Categoria categoria = categoriaRepository.findOne(codigo);
-		return  ResponseEntity.ok(categoria);
+		Optional<Categoria> categoria = categoriaRepository.findById(codigo);
+		return  categoria.isPresent() ?  ResponseEntity.ok(categoria.get()) : ResponseEntity.notFound().build();
 	}
 }
